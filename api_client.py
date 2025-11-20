@@ -1,19 +1,20 @@
 import os
 import requests
 import json
-from config import LILYPAD_API_URL, DEFAULT_MODEL, DEFAULT_MAX_TOKENS, DEFAULT_TEMPERATURE
+from config import API_URL, DEFAULT_MODEL, DEFAULT_MAX_TOKENS, DEFAULT_TEMPERATURE
 from logger import logger
 from ui import ThinkingAnimation
 
-class LilypadClient:
-    """Handles interaction with Lilypad API"""
+class APIClient:
+    """Handles interaction with API"""
 
     def __init__(self, api_token=None):
-        self.api_url = LILYPAD_API_URL
-        self.api_token = api_token or os.getenv("LILYPAD_API_TOKEN")
+        self.api_url = API_URL
+        self.api_token = api_token or os.getenv("API_TOKEN")
+        logger.info(f"🔗 API Client initialized with URL: {self.api_url}")
 
     def query(self, query: str, context: str) -> str:
-        """Query Lilypad API with the given query and context"""
+        """Query API with the given query and context"""
 
         system_prompt = """You are an AI assistant that answers questions using only the provided context.
 
@@ -39,24 +40,33 @@ class LilypadClient:
     """
 
         payload = {
-            "model": DEFAULT_MODEL,
             "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
             "max_tokens": DEFAULT_MAX_TOKENS,
-            "temperature": DEFAULT_TEMPERATURE
+            "temperature": DEFAULT_TEMPERATURE,
+            "stream": True
         }
+        
+        # Add model only if it's specified in config
+        if DEFAULT_MODEL:
+            payload["model"] = DEFAULT_MODEL
 
         headers = {
-            "Authorization": f"Bearer {self.api_token}",
             "Content-Type": "application/json"
         }
+        
+        # Only add authorization if token exists (for remote APIs)
+        if self.api_token:
+            headers["Authorization"] = f"Bearer {self.api_token}"
 
         thinking = ThinkingAnimation()
         thinking.start()
 
         try:
+            logger.info(f"🚀 Making POST request to: {self.api_url}")
+            logger.info(f"📤 Payload: {payload}")
             response = requests.post(self.api_url, headers=headers, json=payload, stream=True)
 
             if response.status_code == 401:
@@ -75,55 +85,81 @@ class LilypadClient:
 
 
     def _process_streaming_response(self, response: requests.Response) -> str:
-        """Process streaming or full JSON response from Lilypad API."""
+        """Process streaming or full JSON response from API."""
         full_response = []
+        
+        logger.info(f"📥 Response status: {response.status_code}")
+        logger.info(f"📥 Response headers: {dict(response.headers)}")
 
         try:
-            # Check content type header to decide how to parse
-            content_type = response.headers.get("Content-Type", "")
-            is_streaming = "text/event-stream" in content_type
-
-            if is_streaming:
-                current_event = None
-
+            # Check if streaming based on response (your API returns streaming data)
+            if response.status_code == 200 and (response.headers.get("content-type", "").startswith("text/plain") or "stream" in str(response.headers) or response.text.startswith("data:")):
+                # Handle streaming response
                 for line in response.iter_lines():
                     if not line:
                         continue
 
                     line_str = line.decode("utf-8").strip()
-
-                    if line_str.startswith("event:"):
-                        current_event = line_str[len("event:"):].strip()
-                        continue
-
+                    logger.debug(f"Stream line: {line_str[:200]}...")
+                    
+                    # Handle both SSE format and plain streaming
                     if line_str.startswith("data:"):
                         data_str = line_str[len("data:"):].strip()
-
+                        
                         if data_str == "[DONE]":
-                            continue
-
-                        if current_event == "delta":
-                            try:
-                                data = json.loads(data_str)
-                                message = data.get("choices", [{}])[0].get("message", {})
-                                content = message.get("content", "")
-                                if content:
-                                    full_response.append(content)
-                            except json.JSONDecodeError:
-                                logger.debug(f"Failed to parse JSON in delta event: {data_str[:100]}...")
+                            break
+                            
+                        try:
+                            data = json.loads(data_str)
+                            content = ""
+                            
+                            # Handle streaming format from your API
+                            if "choices" in data and len(data["choices"]) > 0:
+                                choice = data["choices"][0]
+                                # Try delta format first
+                                if "delta" in choice and "content" in choice["delta"]:
+                                    content = choice["delta"]["content"]
+                                # Try direct message content
+                                elif "message" in choice and "content" in choice["message"]:
+                                    content = choice["message"]["content"]
+                                # Try text field (some APIs use this)
+                                elif "text" in choice:
+                                    content = choice["text"]
+                            
+                            if content:
+                                full_response.append(content)
+                                
+                        except json.JSONDecodeError as e:
+                            logger.debug(f"Failed to parse JSON: {data_str[:100]}... Error: {e}")
+                            # If it's not JSON, maybe it's raw text
+                            if data_str and not data_str.startswith("{"):
+                                full_response.append(data_str)
 
             else:
-                # Non-streaming full JSON response
+                # Handle non-streaming response
                 try:
                     data = response.json()
-                    message = data.get("choices", [{}])[0].get("message", {})
-                    content = message.get("content", "")
-                    if content:
+                    logger.debug(f"Full response: {data}")
+                    
+                    if "choices" in data and len(data["choices"]) > 0:
+                        message = data["choices"][0].get("message", {})
+                        content = message.get("content", "")
+                        if content:
+                            full_response.append(content)
+                    else:
+                        # Fallback: try to get any text content
+                        content = str(data)
                         full_response.append(content)
+                        
                 except Exception as e:
-                    logger.error(f"Failed to parse full JSON response: {e}")
+                    logger.error(f"Failed to parse JSON response: {e}")
+                    # Try to get raw text
+                    full_response.append(response.text)
 
         except Exception as e:
             logger.error(f"Error processing response: {e}")
+            full_response.append(f"Error: {str(e)}")
 
-        return "".join(full_response).strip()
+        result = "".join(full_response).strip()
+        logger.info(f"📤 Final response length: {len(result)}")
+        return result

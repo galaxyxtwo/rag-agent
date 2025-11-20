@@ -1,12 +1,12 @@
 from document_processing import DocumentProcessor
 from vector_store import VectorStore
 from keyword_retriever import KeywordRetriever
-from api_client import LilypadClient
-from config import DEFAULT_LILYPAD_API_TOKEN
+from api_client import APIClient
+from config import DEFAULT_API_TOKEN
 from logger import logger
 from typing import Dict, Any
 
-class LilypadRAGAgent:
+class RAGAgent:
     """Manages the RAG system"""
 
     def __init__(self, document_path, api_token=None, use_embeddings=True):
@@ -19,7 +19,7 @@ class LilypadRAGAgent:
             self.retriever = KeywordRetriever(document_path)
 
         # Use provided API token or default from environment
-        self.lilypad_client = LilypadClient(api_token or DEFAULT_LILYPAD_API_TOKEN)
+        self.api_client = APIClient(api_token or DEFAULT_API_TOKEN)
 
     def initialize(self):
         try:
@@ -80,13 +80,13 @@ class LilypadRAGAgent:
             logger.error("❌ Retrieval failed. No context was returned.")
             return {"answer": "❌ Retrieval failed. No context available.", "context": ""}
         try:
-            answer = self.lilypad_client.query(query, context)
+            answer = self.api_client.query(query, context)
         except Exception as e:
             logger.error(f"❌ API call failed: {e}")
             return {"answer": f"❌ API call failed: {e}", "context": context}
 
         if not answer:
-            logger.error("❌ Lilypad API returned an empty response.")
-            return {"answer": "❌ Lilypad API returned an empty response.", "context": context}
+            logger.error("❌ API returned an empty response.")
+            return {"answer": "❌ API returned an empty response.", "context": context}
 
         return {"answer": answer, "context": context}

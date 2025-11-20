@@ -4,7 +4,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from config import VECTOR_STORE_DIR, DEFAULT_EMBEDDING_MODEL
 from logger import logger
-from langchain.docstore.document import Document
+from langchain_core.documents import Document
 from typing import List
 
 class VectorStore:
@@ -101,5 +101,8 @@ class VectorStore:
             context_parts.append(f"{header}\n{doc.page_content}")
 
         return "\n\n---\n\n".join(context_parts)
+
+
+
 
 

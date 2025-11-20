@@ -1,0 +1,56 @@
+2025-11-20 14:56:57,154 - logger - INFO - Working Directory: /Users/alexmirran/Documents/GitHub/rag-agent
+2025-11-20 14:56:57,155 - logger - INFO - Python Path: ['/Users/alexmirran/Documents/GitHub/rag-agent', '/Users/alexmirran/.pyenv/versions/3.11.14/lib/python311.zip', '/Users/alexmirran/.pyenv/versions/3.11.14/lib/python3.11', '/Users/alexmirran/.pyenv/versions/3.11.14/lib/python3.11/lib-dynload', '/Users/alexmirran/.pyenv/versions/3.11.14/lib/python3.11/site-packages', '/var/folders/yz/byh90pvs0yd5c2d5wdw4169c0000gn/T/tmpa4bcqj7o']
+2025-11-20 14:56:57,155 - logger - INFO - 🔗 API Client initialized with URL: http://localhost:3000/v1/chat/completions
+2025-11-20 14:56:57,155 - logger - INFO - Processing document...
+2025-11-20 14:56:57,156 - logger - INFO - 📄 Created 53 line-based chunks
+2025-11-20 14:56:57,156 - logger - INFO - 📄 Total document chunks created: 142
+2025-11-20 14:56:57,156 - logger - INFO - 🔹 Chunk 1: You are a high performing AI assistant tasked with helping me on my daily to dos. I need you to know everything about the company I work at Gradient, my role there, and how parallax works + gradient cloud....
+2025-11-20 14:56:57,156 - logger - INFO - 🔹 Chunk 2: Gradient is an AI R&D lab dedicated to building **open intelligence** through a fully decentralized infrastructure, encompassing **distributed training, serving,** verification, simulation, multi-agent systems, and more....
+2025-11-20 14:56:57,156 - logger - INFO - 🔹 Chunk 3: We are solving the hardest and most ambitious problem in the intersection of Blockchain x AI: How do we train/serve good LLMs over public internet —— Is it even possible to build an OpenAI competitor over a permissionless, autonomous network?...
+2025-11-20 14:56:57,156 - logger - INFO - Initializing vector store...
+2025-11-20 14:56:57,156 - logger - INFO - Initializing embedding model: sentence-transformers/all-MiniLM-L6-v2
+2025-11-20 14:56:57,182 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: mps
+2025-11-20 14:56:57,182 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: sentence-transformers/all-MiniLM-L6-v2
+2025-11-20 14:56:58,819 - logger - INFO - Creating vector store
+2025-11-20 14:56:59,094 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-11-20 14:57:02,392 - logger - INFO - ✅ Vector store initialized successfully
+2025-11-20 14:57:02,392 - logger - INFO - Agent initialized successfully.
+2025-11-20 15:04:19,799 - logger - INFO - 🔍 Processing query: what is gradient
+2025-11-20 15:04:19,810 - logger - INFO - 🔍 Retrieving context for query: 'what is gradient'
+2025-11-20 15:04:23,668 - logger - INFO - 📌 Retrieved 5 chunks using MMR search
+2025-11-20 15:04:23,684 - logger - INFO - 📌 Retrieved 6 total unique chunks
+2025-11-20 15:04:23,684 - logger - INFO - 🔹 Chunk 1: Gradient is an AI R&D lab dedicated to building **open intelligence** through a fully decentralized infrastructure, encompassing **distributed training, serving,** verification, simulation, multi-agent systems, and more....
+2025-11-20 15:04:23,684 - logger - INFO - 🔹 Chunk 2: Backed by **top investors** and a team of **world-class researchers**, Gradient is committed to releasing more frontier research that will unlock a future where **intelligence can be assembled, scaled, and evolved by anyone, anywhere**....
+2025-11-20 15:04:23,684 - logger - INFO - 🔹 Chunk 3: docker images              # List Docker images
+docker rmi <image_id>      # Remove Parallax images
+For Windows, simply go to Control Panel → Programs → Uninstall a program, find "Gradient" in the list, and uninstall it....
+2025-11-20 15:04:23,684 - logger - INFO - 📄 Retrieved Context:
+[CHUNK 1 - TYPE: small]
+Gradient is an AI R&D lab dedicated to building **open intelligence** through a fully decentralized infrastructure, encompassing **distributed training, serving,** verification, simulation, multi-agent systems, and more.
+
+---
+
+[CHUNK 2 - TYPE: small]
+Backed by **top investors** and a team of **world-class researchers**, Gradient is committed to releasing more frontier research that will unlock a future where **intelligence can be assembled, scaled, and evolved by anyone, anywhere**.
+
+---
+
+[CHUNK 3 - TYPE: small]
+docker images              # List Docker images
+docker rmi <image_id>      # Remove Parallax images
+For Windows, simply go to Control Panel → Programs → Uninstall a program, find "Gradient" in the list, and uninstall it.
+
+---
+
+[CHUNK 4 - TYPE: small]
+Our current stack includes **Parallax** for distributed serving, **Echo** for distributed reinforcement learning, and **Gradient Cloud** for enterprise solutions.
+
+---
+
+[CHUNK 5 - TYPE: small]
+git clone http
+2025-11-20 15:04:23,687 - logger - INFO - 🚀 Making POST request to: http://localhost:3000/v1/chat/completions
+2025-11-20 15:04:23,687 - logger - INFO - 📤 Payload: {'messages': [{'role': 'system', 'content': 'You are an AI assistant that answers questions using only the provided context.\n\n1. Read ALL provided context carefully before answering.\n2. ONLY use information present in the context.\n3. Provide a clear and direct answer using the most relevant details.\n4. If the answer is NOT in the context, say \'NO MATCH FOUND\'.\n5. DO NOT mention \'chunks\', \'CHUNK X\', \'Issue X\', \'Issue\', or any metadata related to document retrieval.\n6. If the context includes issue numbers, REWRITE the response to exclude them.\n7. Instead of referencing "Issue X," rephrase the information naturally. \n   - Example: Instead of saying "Using multiple GPUs (Issue 2)," say "A common issue is configuring multiple GPUs correctly."\n8. Summarize issues in a way that is natural and avoids referencing the original structure of the document.'}, {'role': 'user', 'content': 'Context:\n    Gradient is an AI R&D lab dedicated to building **open intelligence** through a fully decentralized infrastructure, encompassing **distributed training, serving,** verification, simulation, multi-agent systems, and more.\n\n---\n\n\nBacked by **top investors** and a team of **world-class researchers**, Gradient is committed to releasing more frontier research that will unlock a future where **intelligence can be assembled, scaled, and evolved by anyone, anywhere**.\n\n---\n\n\ndocker images              # List Docker images\ndocker rmi <image_id>      # Remove Parallax images\nFor Windows, simply go to Control Panel → Programs → Uninstall a program, find "Gradient" in the list, and uninstall it.\n\n---\n\n\nOur current stack includes **Parallax** for distributed serving, **Echo** for distributed reinforcement learning, and **Gradient Cloud** for enterprise solutions.\n\n---\n\n\ngit clone https://github.com/GradientHQ/parallax.git\ncd parallax\n\n# Enter Python virtual environment\npython3 -m venv ./venv\nsource ./venv/bin/activate\n\npip install -e \'.[mac]\'\nNext time to re-activate this virtual environment, run source ./venv/bin/activate.\n\n---\n\n\nYou are a high performing AI assistant tasked with helping me on my daily to dos. I need you to know everything about the company I work at Gradient, my role there, and how parallax works + gradient cloud.\n\n    Question: what is gradient\n\n    Answer strictly based on the context above:\n    '}], 'max_tokens': 1024, 'temperature': 0.0, 'stream': True, 'model': 'Qwen3-0.6B'}
+2025-11-20 15:04:23,921 - logger - INFO - 📥 Response status: 200
+2025-11-20 15:04:23,921 - logger - INFO - 📥 Response headers: {'date': 'Thu, 20 Nov 2025 21:04:23 GMT', 'server': 'uvicorn', 'cache-control': 'no-cache', 'connection': 'keep-alive', 'content-type': 'text/event-stream; charset=utf-8', 'Transfer-Encoding': 'chunked'}
+2025-11-20 15:04:53,107 - logger - INFO - 📤 Final response length: 2139

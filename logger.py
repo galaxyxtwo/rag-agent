@@ -1,6 +1,6 @@
 import logging
 
-def setup_logging(log_file='lilypad_rag.log', log_level=logging.INFO):
+def setup_logging(log_file='rag_agent.log', log_level=logging.INFO):
     """Configure logging"""
     logging.basicConfig(
         filename=log_file,

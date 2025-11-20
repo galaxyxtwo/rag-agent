@@ -2,7 +2,7 @@ import os
 import re
 import numpy as np
 from logger import logger
-from langchain.docstore.document import Document
+from langchain_core.documents import Document
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from typing import List, Dict

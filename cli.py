@@ -1,7 +1,7 @@
 import argparse
 import os
 import sys
-from rag_agent import LilypadRAGAgent
+from rag_agent import RAGAgent
 from logger import setup_logging, logger  # ✅ Import both logger and setup_logging
 from ui import ThinkingAnimation
 from config import DEFAULT_DOCUMENT_PATH
@@ -14,9 +14,9 @@ logger.info(f"Working Directory: {os.getcwd()}")
 logger.info(f"Python Path: {sys.path}")
 def parse_args():
     """Parse command line arguments with default values"""
-    parser = argparse.ArgumentParser(description="Lilypad RAG Support Agent")
+    parser = argparse.ArgumentParser(description="RAG Support Agent")
     parser.add_argument("--doc", type=str, default=DEFAULT_DOCUMENT_PATH, help="Path to document file")
-    parser.add_argument("--token", type=str, default=os.getenv("LILYPAD_API_TOKEN"), help="Lilypad API token")
+    parser.add_argument("--token", type=str, default=os.getenv("API_TOKEN"), help="API token")
     parser.add_argument("--no-embeddings", action="store_true", help="Use keyword-based retrieval instead of embeddings")
     return parser.parse_args()
 
@@ -25,7 +25,7 @@ def main():
     args = parse_args()
     setup_logging()
 
-    print("🐸 Lilypad RAG Support Agent 🐸\n" + "-" * 40)
+    print("🤖 RAG Support Agent 🤖\n" + "-" * 40)
     # Check if document exists
     if not os.path.exists(args.doc):
         print(f"❌ Error: Document not found at {args.doc}")
@@ -34,7 +34,7 @@ def main():
     use_embeddings = not args.no_embeddings
 
     # Create and initialize the RAG agent
-    rag_agent = LilypadRAGAgent(document_path=args.doc, api_token=args.token, use_embeddings=use_embeddings)
+    rag_agent = RAGAgent(document_path=args.doc, api_token=args.token, use_embeddings=use_embeddings)
 
     if not rag_agent.initialize():
         print("❌ Failed to initialize agent. Exiting.")
@@ -43,14 +43,14 @@ def main():
     print("✅ System ready\n" + "-" * 40 + "\nAsk a question or type 'quit' to exit.")
 
     while True:
-        query = input("\n🐸 Question: ").strip()
+        query = input("\n🤖 Question: ").strip()
         if query.lower() in ["quit", "exit"]:
-            print("\nThank you for using Lilypad RAG Support Agent. Goodbye!")
+            print("\nThank you for using RAG Support Agent. Goodbye!")
             break
 
         result = rag_agent.process_query(query)
         answer = result.get("answer", "❌ No valid answer received.")
-        print("\n🐸 Answer:", answer)
+        print("\n🤖 Answer:", answer)
 
 if __name__ == "__main__":
     main()
