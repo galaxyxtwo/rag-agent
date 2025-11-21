@@ -1,10 +1,10 @@
-# Lilypad RAG Agent
+# RAG Agent
 
-Lilypad RAG Support Agent is a Retrieval-Augmented Generation (RAG) AI agent designed to process and answer queries efficiently.
+The RAG Support Agent is a Retrieval-Augmented Generation (RAG) AI agent designed to process and answer queries efficiently.
 
 ## **How It Works**
 
-The agent follows a Retrieval-Augmented Generation (RAG) approach to improve response accuracy and relevance. It operates through the following steps:
+The system follows a Retrieval-Augmented Generation (RAG) approach to improve response accuracy and relevance. It operates through the following steps:
 
 1. **Embedding Text with `all-MiniLM`**
 
@@ -15,15 +15,13 @@ The agent follows a Retrieval-Augmented Generation (RAG) approach to improve res
 
    - The agent searches a pre-indexed database to retrieve the most relevant pieces of information based on the query.
 
-3. **Generating Responses with Llama3 via Lilypad API**
-   - The retrieved context is sent to the **Lilypad API**, which processes the query using **Llama3 8b**.
-   - The AI model generates a detailed response based on the retrieved information.
+3. **Generating Responses via any inference API**
 
 This combination of embedding-based retrieval and advanced language model generation ensures **precise, context-aware responses**.
 
 ## **Expanding to Your Own Support Agent**
 
-The Lilypad RAG Support Agent can be customized to work for different projects or knowledge bases by updating the context it uses for retrieval.
+The RAG Support Agent can be customized to work for different projects or knowledge bases by updating the context it uses for retrieval.
 
 ### **Modifying the Context Source (`issues.md`)**
 
@@ -41,16 +39,16 @@ By default, the agent retrieves relevant information from `issues.md`, a markdow
 To get started, clone this repository to your local machine:
 
 ```sh
-git clone https://github.com/PBillingsby/lilypad-rag-agent.git
-cd lilypad-rag-agent
+git clone https://github.com/galaxyxtwo/rag-agent
+cd rag-agent
 ```
 
 ### **2. Set Up Your API Key**
 
-This agent requires an API key to function. Go to https://anura.lilypad.tech and sign up to get an API key.
+This agent requires an API key for an Inference api to function. Any OpenAI API compatible endpoint will work.
 
 Export your API key as an environment variable:
-`export LILYPAD_API_TOKEN="your-api-key-here"`
+`export DEFAULT_API_TOKEN="your-api-key-here"`
 
 ### **3. Install Dependencies**
 
